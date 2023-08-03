@@ -1,5 +1,5 @@
 import { HttpService } from '@nestjs/axios';
-import { Injectable } from '@nestjs/common';
+import { HttpException, Injectable } from '@nestjs/common';
 import * as osmtogeojson from 'osmtogeojson';
 import { FeatureCollection, Geometry } from 'geojson';
 
@@ -16,9 +16,13 @@ export class OsmService {
       }
     >
   > {
-    const osm = await this.httpService.axiosRef.get(this.osmUrl + bbox);
-
-    const response = osmtogeojson(osm.data);
-    return response;
+    try {
+      const osm = await this.httpService.axiosRef.get(this.osmUrl + bbox);
+      const response = osmtogeojson(osm.data);
+      return response;
+    } catch (error) {
+      const { response } = error;
+      throw new HttpException(response?.data, response?.status);
+    }
   }
 }
