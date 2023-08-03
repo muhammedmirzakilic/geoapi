@@ -8,6 +8,7 @@ import {
 @ValidatorConstraint()
 export class BboxValidator implements ValidatorConstraintInterface {
   validate(value: string): boolean {
+    if (!value) return false;
     const bbox = value.split(',');
     if (bbox.length !== 4) {
       return false;
